@@ -8,6 +8,7 @@ export const App = () => {
   const [todoText, setTodoText] = useState("");
   const [incompleteTodos, setIncompleteTodos] = useState([]);
   const [completeTodos, setCompleteTodos] = useState([]);
+  const [limit_flg, setLimiFlg] = useState(false);
 
   //Todo追加処理
   const onChangeTodoText = (event) => setTodoText(event.target.value);
@@ -15,13 +16,23 @@ export const App = () => {
     if (todoText === "") return;
 
     setTodoText("");
-    setIncompleteTodos([...incompleteTodos, todoText]);
+    const newTodos = [...incompleteTodos, todoText];
+    if (newTodos.length > 5) {
+      setLimiFlg(true);
+      return;
+    } else {
+      setLimiFlg(false);
+    }
+    setIncompleteTodos(newTodos);
   };
 
   //削除処理
   const onClickDelete = (index, todo) => {
     const newTodos = [...todo];
     newTodos.splice(index, 1);
+    if (newTodos.length < 6) {
+      setLimiFlg(false);
+    }
 
     if (todo === incompleteTodos) {
       setIncompleteTodos(newTodos);
@@ -40,6 +51,10 @@ export const App = () => {
   //戻す処理
   const onClickReturn = (index) => {
     const newTodos = [...incompleteTodos, completeTodos[index]];
+    if (newTodos.length > 5) {
+      setLimiFlg(true);
+      return;
+    }
     setIncompleteTodos(newTodos);
     onClickDelete(index, completeTodos);
   };
@@ -50,6 +65,7 @@ export const App = () => {
         addTodoText={addTodoText}
         onChangeTodoText={onChangeTodoText}
         todoText={todoText}
+        limit_flg={limit_flg}
       />
       <InCompleteTodo
         incompleteTodos={incompleteTodos}
